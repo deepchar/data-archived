@@ -7,7 +7,7 @@ class WikiClient(object):
     #Initializer
     def __init__(self , language):
         #We get all english pages,after it try to find languge referenses
-        if(self.validate_language(language))
+        if self.validate_language(language):
             self.language = language
             self.englishEngine = wikipediaapi.Wikipedia('eng')
             self.destLangEngine = wikipediaapi.Wikipedia(language)
