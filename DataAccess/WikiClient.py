@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import wikipediaapi
@@ -9,20 +10,36 @@ class WikiClient(object):
         #We get all english pages,after it try to find languge referenses
         if self.validate_language(language):
             self.language = language
-            self.englishEngine = wikipediaapi.Wikipedia('eng')
+            self.englishEngine = wikipediaapi.Wikipedia('en')
             self.destLangEngine = wikipediaapi.Wikipedia(language)
         else:
             raise ValueError("Specified key for language doesn't support")
+
+    def check_is_limit(self, text, count, is_char = True):
+        rows = text.split("\n")
+        res_rows = 0
+        char_count = 0
+
+        for row in rows:
+            curr_len = len(row)
+            if(curr_len >= 99):
+                char_count += curr_len
+                res_rows += 1
+
+        res_count = char_count if is_char else res_rows
+        is_limit = res_count >= count       
+        return abs(res_count - count),is_limit
 
     #Get JSON response of request
     def get_response(self, url):
         resp = requests.get(url = url)
         return resp.json()
 
-    def validate_language(key):
-        with open('./Language.json',) as file:
+    def validate_language(self,key):
+        lang_path = os.path.join(os.path.dirname(os.path.abspath((__file__))),"Languages.json")
+        with open(lang_path,"r") as file:
             languages = json.load(file)
-            return languages.has_key(key)
+            return key in languages
 
     #Parses titles JSON to list of titles 
     def parse_json(self, titles_jsons):
@@ -37,12 +54,12 @@ class WikiClient(object):
         json_resp = self.get_response(url)
         next_batch = json_resp["continue"]["apcontinue"]
 
-        yield self.parse_json(json_resp["allpages"])
+        yield self.parse_json(json_resp["query"]["allpages"])
 
         url = url + '&apcontinue='+ next_batch
         while(True):
             json_resp = self.get_response(url)
-            yield self.parse_json(json_resp)
+            yield self.parse_json(json_resp["query"]["allpages"])
 
             #batches are over
             if "continue" not in json_resp:
@@ -79,33 +96,46 @@ class WikiClient(object):
                 if curr_pos == 0 :
                     return text 
                 else:
-                    end = start_pos + end - length
+                    end = length - 1 
                     
-            result = result + text[start_pos : end] + '\n'
+            result = result + text[start_pos : end].replace('\n',"") + '\n'
+            
+            if(end == length - 1):
+                break
             curr_pos += end - curr_pos
+        return result
 
     #path-Destination folder where need to write text
     def extract_text(self,path, is_char = True, count = 1000000):
         
-        with open(path,'w') as file:
+        with open(path,'wb') as file:
+            not_valid_pages = 0
+            all_text = ""
+            temp_count = count
             #Wikipedia return title's batches. Each one contains 500 titles
             for titles_batch in self.get_batches():
                 for title in titles_batch:
                     page = self.englishEngine.page(title)
                     #Tryes find same page in required langage
-                    if self.language in page.langlinks:
-                        destTitle = page.langlinks[self.language].title
-                        text = self.split_text(self.destLangEngine.page(destTitle))
-                        file.write(text)
+                    try:
+                        if self.language in page.langlinks:
+                            destTitle = page.langlinks[self.language].title
+                            text = self.split_text(self.destLangEngine.page(destTitle).text)
+                            all_text += text
+                            file.write(text.encode('utf-8'))
 
-                        count -= len(text) if is_char else text.count('\n')
+                            temp_count -= len(text) if is_char else text.count('\n')
                         
-                        del text
-                        if count <= 0:
-                            file.close()
-                            return
-
-
+                            del text
+                            if temp_count <= 0:
+                                res_count,is_limit = self.check_is_limit(all_text,count,is_char)
+                                if(not is_limit):
+                                    temp_count = res_count
+                                    continue
+                                file.close()
+                                return
+                    except Exception as ex:
+                        not_valid_pages+=1
 
 
     
