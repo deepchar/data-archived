@@ -1,9 +1,9 @@
-# deepchar - data access
+## deepchar - data access
 
 Tools for downloading target language corpora - monolingual text.
 
 
-# To download a dataset
+### To download a dataset
 
 First install package dependencies:
 
