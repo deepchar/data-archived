@@ -6,7 +6,7 @@ import wikipediaapi
 class WikiClient(object):
 
     # Initializer
-    def __init__(self , language):
+    def __init__(self, language):
         # We get all english pages,after it try to find languge references
         if self.validate_language(language):
             self.language = language
@@ -69,7 +69,7 @@ class WikiClient(object):
             next_batch = json_resp["continue"]["apcontinue"]
 
     # Returns possition of starting split from
-    def get_pos(self, curr_pos , text):
+    def get_pos(self, curr_pos, text):
         if curr_pos == 0:
             return curr_pos
 
@@ -78,7 +78,7 @@ class WikiClient(object):
         return curr_pos - 20
 
     # Splits text to rows
-    def split_text(self,text):
+    def split_text(self, text):
         result = ""
         curr_pos = 0
         line_length = 100
@@ -106,7 +106,7 @@ class WikiClient(object):
         return result
 
     # path - Destination folder where need to write text
-    def extract_text(self,path, is_char = True, count = 1000000):
+    def extract_text(self, path, is_char = True, count = 1000000):
         
         with open(path,'wb') as file:
             not_valid_pages = 0
