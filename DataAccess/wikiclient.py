@@ -5,9 +5,9 @@ import wikipediaapi
 
 class WikiClient(object):
 
-    #Initializer
+    # Initializer
     def __init__(self , language):
-        #We get all english pages,after it try to find languge referenses
+        # We get all english pages,after it try to find languge references
         if self.validate_language(language):
             self.language = language
             self.englishEngine = wikipediaapi.Wikipedia('en')
@@ -36,19 +36,19 @@ class WikiClient(object):
         return resp.json()
 
     def validate_language(self,key):
-        lang_path = os.path.join(os.path.dirname(os.path.abspath((__file__))),"Languages.json")
+        lang_path = os.path.join(os.path.dirname(os.path.abspath((__file__))),"languages.json")
         with open(lang_path,"r") as file:
             languages = json.load(file)
             return key in languages
 
-    #Parses titles JSON to list of titles 
+    # Parses titles JSON to list of titles 
     def parse_json(self, titles_jsons):
         titles = []
         for current_Json in titles_jsons:
             titles.append(current_Json["title"])
         return titles
 
-    #Returns batch of titles            
+    # Returns batch of titles            
     def get_batches(self):
         url = 'https://en.wikipedia.org/w/api.php?action=query&list=allpages&format=json&aplimit=500'
         json_resp = self.get_response(url)
@@ -61,14 +61,14 @@ class WikiClient(object):
             json_resp = self.get_response(url)
             yield self.parse_json(json_resp["query"]["allpages"])
 
-            #batches are over
+            # Batches are over
             if "continue" not in json_resp:
                 return []
 
             url = url.replace( next_batch , json_resp["continue"]["apcontinue"])
             next_batch = json_resp["continue"]["apcontinue"]
 
-    #Returns possition of starting split from
+    # Returns possition of starting split from
     def get_pos(self, curr_pos , text):
         if curr_pos == 0:
             return curr_pos
@@ -77,7 +77,7 @@ class WikiClient(object):
             curr_pos-=1
         return curr_pos - 20
 
-    #Splits text to rows
+    # Splits text to rows
     def split_text(self,text):
         result = ""
         curr_pos = 0
@@ -105,18 +105,18 @@ class WikiClient(object):
             curr_pos += end - curr_pos
         return result
 
-    #path-Destination folder where need to write text
+    # path - Destination folder where need to write text
     def extract_text(self,path, is_char = True, count = 1000000):
         
         with open(path,'wb') as file:
             not_valid_pages = 0
             all_text = ""
             temp_count = count
-            #Wikipedia return title's batches. Each one contains 500 titles
+            # Wikipedia return title's batches. Each one contains 500 titles
             for titles_batch in self.get_batches():
                 for title in titles_batch:
                     page = self.englishEngine.page(title)
-                    #Tryes find same page in required langage
+                    # Tries to find the same page in the target langage
                     try:
                         if self.language in page.langlinks:
                             destTitle = page.langlinks[self.language].title
