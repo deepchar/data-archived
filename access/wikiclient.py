@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import requests
 import wikipediaapi
@@ -107,7 +108,7 @@ class WikiClient(object):
 
     # path - Destination folder where need to write text
     def extract_text(self, path, is_char = True, count = 1000000):
-        
+        print(count)
         with open(path,'wb') as file:
             not_valid_pages = 0
             all_text = ""
@@ -122,14 +123,17 @@ class WikiClient(object):
                             destTitle = page.langlinks[self.language].title
                             text = self.split_text(self.destLangEngine.page(destTitle).text)
                             all_text += text
+                            print("writing")
                             file.write(text.encode('utf-8'))
-
+                            print("Finished")
                             temp_count -= len(text) if is_char else text.count('\n')
-                        
+                            print(temp_count)
                             del text
                             if temp_count <= 0:
                                 res_count,is_limit = self.check_is_limit(all_text,count,is_char)
                                 if(not is_limit):
+                                    print("Again")
+                                    print(res_count)
                                     temp_count = res_count
                                     continue
                                 file.close()
@@ -137,8 +141,26 @@ class WikiClient(object):
                     except Exception as ex:
                         not_valid_pages+=1
 
+def main(args):
+    try:
+        client = WikiClient(args[0])
+        if(len(args) == 3):
+            client.extract_text(args[1])
+        else:
+            print(int(args[2]))
+            print()
+            client.extract_text(args[1],bool(args[3]),int(args[2]))
+    except Exception as ex:
+        print(ex)
 
-    
+if(__name__ == "__main__"):
+    params = len(sys.argv)
+    if(params == 5 or params == 3 ):
+        main(sys.argv[1:])
+        print("Data was saved in" + sys.argv[2])
+    else:
+        raise ValueError("Specify correct arguments")
+        
 
 
             
