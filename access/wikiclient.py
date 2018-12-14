@@ -123,17 +123,12 @@ class WikiClient(object):
                             destTitle = page.langlinks[self.language].title
                             text = self.split_text(self.destLangEngine.page(destTitle).text)
                             all_text += text
-                            print("writing")
                             file.write(text.encode('utf-8'))
-                            print("Finished")
                             temp_count -= len(text) if is_char else text.count('\n')
-                            print(temp_count)
                             del text
                             if temp_count <= 0:
                                 res_count,is_limit = self.check_is_limit(all_text,count,is_char)
                                 if(not is_limit):
-                                    print("Again")
-                                    print(res_count)
                                     temp_count = res_count
                                     continue
                                 file.close()
