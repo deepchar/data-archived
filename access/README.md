@@ -26,11 +26,11 @@ Only first two arguments are required. You may not fill last two if you don't ne
 
 Example:
 ```
-python wikiclient.py hy C:\Users\Desktop\monolingual.txt 
+python wikiclient.py hy hy-Armn.txt 
 ```
 Or
 ```
-python wikiclient.py hy C:\Users\Desktop\monolingual.txt 100000 False
+python wikiclient.py hy hy-Armn.txt 100000 False
 ```
 
 In case of using from python file need to
@@ -38,11 +38,13 @@ In case of using from python file need to
 2. Initialize WikiClient(language)
 3. Call extract_text(path, is_char = True, count = 1000000): 
 
-### Keys of languages
+### Language code
 
-You can take language key [from Wikipedia][1], exactly from Wiki column.
+You should used the ISO 639-1 or 639-2 language code used in *WP Code* column of the [list of Wikipedias][1].
 
-[1]:https://en.wikipedia.org/wiki/List_of_Wikipedias#Detailed_list
+For your own files we also suggest you use the ISO 15924 script codes to distinguish, for example, canonical Russian (`ru-Cyrl`) from translit Russian (`ru-Latn`).
+
+[1]:https://en.wikipedia.org/wiki/List_of_Wikipedias#List
 
 
 
