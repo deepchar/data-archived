@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 import argparse
 import requests
@@ -164,11 +163,3 @@ if(__name__ == "__main__"):
 
     main(args)
     print("Data was saved in" + args.f)
-        
-
-
-            
-
-
-
-    
