@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import argparse
 import requests
 import wikipediaapi
 
@@ -138,23 +139,31 @@ class WikiClient(object):
 
 def main(args):
     try:
-        client = WikiClient(args[0])
-        if(len(args) == 3):
-            client.extract_text(args[1])
-        else:
-            print(int(args[2]))
-            print()
-            client.extract_text(args[1],bool(args[3]),int(args[2]))
+        client = WikiClient(args.l)
+
+        is_char = True
+        count = 1000000
+
+        if(args.ch is not None):
+            is_char = args.ch
+        if(args.c is not None):
+            count = int(args.c)
+
+        client.extract_text(args.f,is_char,count)
     except Exception as ex:
         print(ex)
 
 if(__name__ == "__main__"):
-    params = len(sys.argv)
-    if(params == 5 or params == 3 ):
-        main(sys.argv[1:])
-        print("Data was saved in" + sys.argv[2])
-    else:
-        raise ValueError("Specify correct arguments")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", required=True)
+    parser.add_argument("-l", required=True)
+    parser.add_argument("-ch", type=bool,required=False)
+    parser.add_argument("-c",  required=False)
+
+    args = parser.parse_args()
+
+    main(args)
+    print("Data was saved in" + args.f)
         
 
 
