@@ -15,22 +15,22 @@ Only first two arguments are required. You may not fill last two if you don't ne
 
 #### Arguments
 
-| Argument name  | Type         | Description                                                                                               | Default |
-| :------------- | :----------: | :--------------------------------------------------------------------------------------------------------:|--------:|
-| Language       | String       | Key of language                                                                                           |         |
-| Path           | String       | Destination file where need to save                                                                       |         |
-| Count          | Int          | Total cout of data                                                                                        | 1000000 |
-| Is_char        | Bool         | If set to true, the count parameter shows the number of characters, otherwise count is the number of rows.| True    |
+| Argument name  | Type         | Description                                                                                               | Default | CLI args names  |
+| :------------- | :----------: | :--------------------------------------------------------------------------------------------------------:|:-------:|----------------:|
+| Language       | String       | Key of language                                                                                           |         |      -l         |
+| Path           | String       | Destination file where need to save                                                                       |         |      -f         |
+| Count          | Int          | Total cout of data                                                                                        | 1000000 |      -c         |
+| Is_char        | Bool         | If set to true, the count parameter shows the number of characters, otherwise count is the number of rows.| True    |      -ch        |
 
 **Note:** Row length is 100
 
 Example:
 ```
-python wikiclient.py hy hy-Armn.txt 
+python wikiclient.py -l hy -f hy-Armn.txt 
 ```
 Or
 ```
-python wikiclient.py hy hy-Armn.txt 100000 False
+python wikiclient.py -l hy -f hy-Armn.txt -c 100000 -ch False
 ```
 
 In case of using from python file need to
