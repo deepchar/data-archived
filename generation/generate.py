@@ -4,8 +4,9 @@ from access import wikiclient
 
 
 class generation(object):
-    language = 'hy'
-    client = wikiclient.WikiClient(language)
+    
+    def __init__(self, from_language):
+        self.client = wikiclient.WikiClient(from_language)
 
     def get_textfile(self):
         file_path = '../raw/wiki_raw.txt'
@@ -19,5 +20,6 @@ class generation(object):
 	    mapping = json.load(m)
 '''
 
-g = generation()
+language = 'hy'
+g = generation(language)
 g.get_textfile()
