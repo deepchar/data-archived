@@ -4,6 +4,7 @@ import argparse
 import requests
 import wikipediaapi
 
+
 class WikiClient(object):
 
     # Initializer
@@ -16,29 +17,29 @@ class WikiClient(object):
         else:
             raise ValueError("Specified key for language doesn't support")
 
-    def check_is_limit(self, text, count, is_char = True):
+    def check_is_limit(self, text, count, is_char=True):
         rows = text.split("\n")
         res_rows = 0
         char_count = 0
 
         for row in rows:
             curr_len = len(row)
-            if(curr_len >= 99):
+            if (curr_len >= 99):
                 char_count += curr_len
                 res_rows += 1
 
         res_count = char_count if is_char else res_rows
-        is_limit = res_count >= count       
-        return abs(res_count - count),is_limit
+        is_limit = res_count >= count
+        return abs(res_count - count), is_limit
 
-    #Get JSON response of request
+    # Get JSON response of request
     def get_response(self, url):
-        resp = requests.get(url = url)
+        resp = requests.get(url=url)
         return resp.json()
 
-    def validate_language(self,key):
-        lang_path = os.path.join(os.path.dirname(os.path.abspath((__file__))),"languages.json")
-        with open(lang_path,"r") as file:
+    def validate_language(self, key):
+        lang_path = os.path.join(os.path.dirname(os.path.abspath((__file__))), "languages.json")
+        with open(lang_path, "r") as file:
             languages = json.load(file)
             return key in languages
 
@@ -57,8 +58,8 @@ class WikiClient(object):
 
         yield self.parse_json(json_resp["query"]["allpages"])
 
-        url = url + '&apcontinue='+ next_batch
-        while(True):
+        url = url + '&apcontinue=' + next_batch
+        while (True):
             json_resp = self.get_response(url)
             yield self.parse_json(json_resp["query"]["allpages"])
 
@@ -66,7 +67,7 @@ class WikiClient(object):
             if "continue" not in json_resp:
                 return []
 
-            url = url.replace( next_batch , json_resp["continue"]["apcontinue"])
+            url = url.replace(next_batch, json_resp["continue"]["apcontinue"])
             next_batch = json_resp["continue"]["apcontinue"]
 
     # Returns possition of starting split from
@@ -74,8 +75,8 @@ class WikiClient(object):
         if curr_pos == 0:
             return curr_pos
 
-        while(text[curr_pos - 20]!= " "):
-            curr_pos-=1
+        while (text[curr_pos - 20] != " "):
+            curr_pos -= 1
         return curr_pos - 20
 
     # Splits text to rows
@@ -85,31 +86,31 @@ class WikiClient(object):
         line_length = 100
         length = len(text)
 
-        while(curr_pos < length):
+        while (curr_pos < length):
             end = curr_pos + line_length
-            start_pos = self.get_pos(curr_pos,text)
+            start_pos = self.get_pos(curr_pos, text)
 
             if end < length:
-                if  text[end] != " ":
-                    while(text[end] != " " and end != length):
-                        end+=1
+                if text[end] != " ":
+                    while (text[end] != " " and end != length):
+                        end += 1
             else:
-                if curr_pos == 0 :
-                    return text 
+                if curr_pos == 0:
+                    return text
                 else:
-                    end = length - 1 
-                    
-            result = result + text[start_pos : end].replace('\n',"") + '\n'
-            
-            if(end == length - 1):
+                    end = length - 1
+
+            result = result + text[start_pos: end].replace('\n', "") + '\n'
+
+            if (end == length - 1):
                 break
             curr_pos += end - curr_pos
         return result
 
     # path - Destination folder where need to write text
-    def extract_text(self, path, is_char = True, count = 1000000):
+    def extract_text(self, path, is_char=True, count=1000000):
         print(count)
-        with open(path,'wb') as file:
+        with open(path, 'wb') as file:
             not_valid_pages = 0
             all_text = ""
             temp_count = count
@@ -127,14 +128,15 @@ class WikiClient(object):
                             temp_count -= len(text) if is_char else text.count('\n')
                             del text
                             if temp_count <= 0:
-                                res_count,is_limit = self.check_is_limit(all_text,count,is_char)
-                                if(not is_limit):
+                                res_count, is_limit = self.check_is_limit(all_text, count, is_char)
+                                if (not is_limit):
                                     temp_count = res_count
                                     continue
                                 file.close()
                                 return
                     except Exception as ex:
-                        not_valid_pages+=1
+                        not_valid_pages += 1
+
 
 def main(args):
     try:
@@ -143,21 +145,22 @@ def main(args):
         is_char = True
         count = 1000000
 
-        if(args.ch is not None):
+        if (args.ch is not None):
             is_char = args.ch
-        if(args.c is not None):
+        if (args.c is not None):
             count = int(args.c)
 
-        client.extract_text(args.f,is_char,count)
+        client.extract_text(args.f, is_char, count)
     except Exception as ex:
         print(ex)
 
-if(__name__ == "__main__"):
+
+if (__name__ == "__main__"):
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", required=True)
     parser.add_argument("-l", required=True)
-    parser.add_argument("-ch", type=bool,required=False)
-    parser.add_argument("-c",  required=False)
+    parser.add_argument("-ch", type=bool, required=False)
+    parser.add_argument("-c", required=False)
 
     args = parser.parse_args()
 
