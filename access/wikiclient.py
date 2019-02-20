@@ -1,11 +1,12 @@
+
 import os
 import json
 import argparse
 import requests
+import baseclient
 import wikipediaapi
 
-
-class WikiClient(object):
+class WikiClient(BaseClient):
 
     # Initializer
     def __init__(self, language):
@@ -17,31 +18,10 @@ class WikiClient(object):
         else:
             raise ValueError("Specified key for language doesn't support")
 
-    def check_is_limit(self, text, count, is_char=True):
-        rows = text.split("\n")
-        res_rows = 0
-        char_count = 0
-
-        for row in rows:
-            curr_len = len(row)
-            if (curr_len >= 99):
-                char_count += curr_len
-                res_rows += 1
-
-        res_count = char_count if is_char else res_rows
-        is_limit = res_count >= count
-        return abs(res_count - count), is_limit
-
     # Get JSON response of request
     def get_response(self, url):
         resp = requests.get(url=url)
         return resp.json()
-
-    def validate_language(self, key):
-        lang_path = os.path.join(os.path.dirname(os.path.abspath((__file__))), "languages.json")
-        with open(lang_path, "r") as file:
-            languages = json.load(file)
-            return key in languages
 
     # Parses titles JSON to list of titles 
     def parse_json(self, titles_jsons):
@@ -69,43 +49,6 @@ class WikiClient(object):
 
             url = url.replace(next_batch, json_resp["continue"]["apcontinue"])
             next_batch = json_resp["continue"]["apcontinue"]
-
-    # Returns possition of starting split from
-    def get_pos(self, curr_pos, text):
-        if curr_pos == 0:
-            return curr_pos
-
-        while (text[curr_pos - 20] != " "):
-            curr_pos -= 1
-        return curr_pos - 20
-
-    # Splits text to rows
-    def split_text(self, text):
-        result = ""
-        curr_pos = 0
-        line_length = 100
-        length = len(text)
-
-        while (curr_pos < length):
-            end = curr_pos + line_length
-            start_pos = self.get_pos(curr_pos, text)
-
-            if end < length:
-                if text[end] != " ":
-                    while (text[end] != " " and end != length):
-                        end += 1
-            else:
-                if curr_pos == 0:
-                    return text
-                else:
-                    end = length - 1
-
-            result = result + text[start_pos: end].replace('\n', "") + '\n'
-
-            if (end == length - 1):
-                break
-            curr_pos += end - curr_pos
-        return result
 
     # path - Destination folder where need to write text
     def extract_text(self, path, is_char=True, count=1000000):
@@ -136,6 +79,7 @@ class WikiClient(object):
                                 return
                     except Exception as ex:
                         not_valid_pages += 1
+
 
 
 def main(args):
