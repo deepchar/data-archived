@@ -41,7 +41,7 @@ lan1: str = 'hy'
 lan2: str = 'en'
 g = generation(lan1, lan2)
 
-#g.get_textfile()
+g.get_textfile()
 
 map_file = '../mappings/hy-Latn.json'
 #pprint(g.get_mapping(map_file))

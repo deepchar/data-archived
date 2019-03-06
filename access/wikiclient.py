@@ -3,8 +3,8 @@ import os
 import json
 import argparse
 import requests
-import baseclient
 import wikipediaapi
+from baseclient import BaseClient
 
 class WikiClient(BaseClient):
 
@@ -23,14 +23,14 @@ class WikiClient(BaseClient):
         resp = requests.get(url=url)
         return resp.json()
 
-    # Parses titles JSON to list of titles 
+    # Parses titles JSON to list of titles
     def parse_json(self, titles_jsons):
         titles = []
         for current_Json in titles_jsons:
             titles.append(current_Json["title"])
         return titles
 
-    # Returns batch of titles            
+    # Returns batch of titles
     def get_batches(self):
         url = 'https://en.wikipedia.org/w/api.php?action=query&list=allpages&format=json&aplimit=500'
         json_resp = self.get_response(url)
@@ -57,6 +57,7 @@ class WikiClient(BaseClient):
             not_valid_pages = 0
             all_text = ""
             temp_count = count
+            prev= ""
             # Wikipedia return title's batches. Each one contains 500 titles
             for titles_batch in self.get_batches():
                 for title in titles_batch:
@@ -65,6 +66,9 @@ class WikiClient(BaseClient):
                     try:
                         if self.language in page.langlinks:
                             destTitle = page.langlinks[self.language].title
+                            if(prev == destTitle):
+                                continue
+                            prev = destTitle
                             text = self.split_text(self.destLangEngine.page(destTitle).text)
                             all_text += text
                             file.write(text.encode('utf-8'))
