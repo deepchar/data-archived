@@ -1,10 +1,9 @@
 import json
 import codecs
 import random
-from pprint import pprint
+#from pprint import pprint
 
 from access.wikiclient import WikiClient
-
 
 class generation(object):
 
@@ -14,7 +13,7 @@ class generation(object):
 
     def get_textfile(self):
         file_path = '../raw/wiki_raw.txt'
-        self.client.extract_text(file_path, is_char=True, count=100000)
+        self.client.extract_text(file_path, is_char=True, count=1000000)
 
 
     def get_mapping(self, file):

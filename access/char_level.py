@@ -1,7 +1,8 @@
 
-path = '/home/user/data/raw/wiki_raw.txt'
-path1 = '/home/user/sockeye/raw/wiki_raw.txt'
+path = '../raw/translit_text.txt'
+path1 = '../raw/translit_text_char.txt'
 lines = None
+
 with open(path,"r", encoding='utf-8') as file:
     lines = file.readlines()
 

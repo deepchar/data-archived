@@ -1,16 +1,14 @@
-
-import os
-import json
 import argparse
 import requests
 import wikipediaapi
-from baseclient import BaseClient
+
+from access.baseclient import BaseClient
 
 class WikiClient(BaseClient):
 
     # Initializer
     def __init__(self, language):
-        # We get all english pages,after it try to find languge references
+        # We get all english pages,after it try to find language references
         if self.validate_language(language):
             self.language = language
             self.englishEngine = wikipediaapi.Wikipedia('en')
