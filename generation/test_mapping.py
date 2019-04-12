@@ -1,7 +1,7 @@
 import random
 import codecs
 
-alphabet = "A B C D E F G H I K L M N O P Q R S T V X Y Z".split(" ")
+alphabet = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" ")
 
 print(alphabet)
 
@@ -15,7 +15,7 @@ for index in range(1000):
     curr = ""
     for i in range(100):
         curr += random.choice(alphabet ) + " "
-    res+=curr+"\n"
+    res += curr + "\n"
 
 res1 = ""
 
