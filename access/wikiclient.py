@@ -4,6 +4,7 @@ import wikipediaapi
 
 from access.baseclient import BaseClient
 
+
 class WikiClient(BaseClient):
 
     # Initializer
@@ -55,7 +56,7 @@ class WikiClient(BaseClient):
             not_valid_pages = 0
             all_text = ""
             temp_count = count
-            prev= ""
+            prev = ""
             # Wikipedia return title's batches. Each one contains 500 titles
             for titles_batch in self.get_batches():
                 for title in titles_batch:
@@ -64,7 +65,7 @@ class WikiClient(BaseClient):
                     try:
                         if self.language in page.langlinks:
                             destTitle = page.langlinks[self.language].title
-                            if(prev == destTitle):
+                            if prev == destTitle:
                                 continue
                             prev = destTitle
                             text = self.split_text(self.destLangEngine.page(destTitle).text)
@@ -81,7 +82,6 @@ class WikiClient(BaseClient):
                                 return
                     except Exception as ex:
                         not_valid_pages += 1
-
 
 
 def main(args):
@@ -101,7 +101,7 @@ def main(args):
         print(ex)
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", required=True)
     parser.add_argument("-l", required=True)
