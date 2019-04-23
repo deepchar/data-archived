@@ -2,11 +2,14 @@ import random
 import codecs
 
 alphabet = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" ")
+arm_alphabet = "Ա Բ Ց Դ Ե Ֆ Գ Հ Ի Ջ Կ Լ Մ Ն Ո Պ Ք Ր Ս Տ ՈՒ Վ Ւ Խ Յ Զ".split(" ")
 
-print(alphabet)
+print(arm_alphabet, alphabet)
 
-number = range(len(alphabet))
-mappings = zip(alphabet, number)
+#number = range(len(alphabet))
+
+
+mappings = zip(alphabet, arm_alphabet)
 dictionary = dict(mappings)
 
 res = ""
