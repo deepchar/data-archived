@@ -46,7 +46,7 @@ First install package dependencies:
 pip install -r requirements.txt
 ```
 
-In case of running from cmd need to specify 5 arguments mentioned behind.
+In case of running from cmd need to specify 7 arguments mentioned behind.
 Only first two arguments are required. You may not fill last two if you don't need more data or don't want to consider count as number of rows.
 
 #### Arguments
