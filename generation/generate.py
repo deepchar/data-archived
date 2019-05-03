@@ -14,7 +14,7 @@ class generation(object):
 
     def get_textfile(self):
         file_path = '../raw/wiki_raw.txt'
-        self.client.extract_text(file_path, is_char=False, count=1000)
+        self.client.extract_text(file_path, is_char=False, count=1000000)
 
     def get_mapping(self, file):
         with codecs.open(file, encoding="utf-8-sig") as m:

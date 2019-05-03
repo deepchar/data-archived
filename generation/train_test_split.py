@@ -32,13 +32,13 @@ def split_data(source_full, target_full, dest1, dest2, dest3, dest4):
         f.writelines(test_data1)
 
 
-path_source_full = "../raw/test/source.txt"
-path_target_full = '../raw/test/target.txt'
+path_source_full = "../raw/translit_text_char.txt"
+path_target_full = '../raw/wiki_raw_char.txt'
 
-source_train_path = "test/source_train.txt"
-source_test_path = "test/source_test.txt"
-target_train_path = "test/target_train.txt"
-target_test_path = "test/target_test.txt"
+source_train_path = "source_train.txt"
+source_test_path = "source_test.txt"
+target_train_path = "target_train.txt"
+target_test_path = "target_test.txt"
 
 ## calling the splitting function
 split_data(path_source_full, path_target_full, source_train_path, source_test_path, target_train_path, target_test_path)
