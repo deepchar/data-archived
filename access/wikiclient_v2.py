@@ -16,9 +16,9 @@ class WikiClient(BaseClient):
             self.all_text = ""
             self.enough_text = False
             self._lock = Lock()
+            self.limit_lock = Lock()
             self.language = language
             self.is_processing = False
-            self.englishEngine = wikipediaapi.Wikipedia('en')
             self.is_char = True
             self.count = 1000000
         else:
@@ -45,8 +45,9 @@ class WikiClient(BaseClient):
         url +='&apcontinue=' + next_batch
 
         while True:
-            if self.enough_text:
-                break
+            with self.limit_lock:
+                if self.enough_text:
+                    break
 
             if continue_get_titles:
                 json_resp = self.get_response(url)
@@ -54,17 +55,19 @@ class WikiClient(BaseClient):
                 url = url.replace(next_batch, json_resp["continue"]["apcontinue"])
                 next_batch = json_resp["continue"]["apcontinue"]
 
-            if len(titles_batch) == 1000:
+            if len(titles_batch) == 2000:
                 titles.append(titles_batch)
                 titles_batch = []
 
             if self.is_processing == False :
                 if last_batach_index < len(titles):
                     self.is_processing = True
+                    tmp_titles = list(set(titles[last_batach_index]))
+                    per_batch_size = len(tmp_titles) // 4
 
-                    to_be_processed = [(titles[last_batach_index][i * 250:i * 250 + 250],i) for i in range(4)]
+                    to_be_processed = [(tmp_titles[i * per_batch_size:i * per_batch_size + per_batch_size],i) for i in range(4)]
                     last_batach_index+= 1
-                    results = pool.map_async(self.process_titles, to_be_processed,callback=self.get_text)
+                    results = pool.map_async(self.get_text_async, to_be_processed,callback=self.aprove_finish)
 
             if "continue" not in json_resp:
                 continue_get_titles = False
@@ -90,13 +93,17 @@ class WikiClient(BaseClient):
 
     def get_text_async(self,titles):
         print("Get text async started - {}".format(titles[1]))
-        engine = wikipediaapi.Wikipedia(self.language)
+        destLangEngine = wikipediaapi.Wikipedia(self.language)
+        eng_engine = wikipediaapi.Wikipedia('en')
         curr_thread_text = ""
         not_valid = 0
 
         for title in titles[0]:
             try:
-                curr_thread_text = self.split_text(self.destLangEngine.page(title).text)
+                page = eng_engine.page(title)
+                if self.language in page.langlinks:
+                    destTitle = page.langlinks[self.language].title
+                    curr_thread_text += self.split_text(destLangEngine.page(destTitle).text)
             except Exception as ex:
                 not_valid+=1
         with self._lock:
@@ -104,10 +111,13 @@ class WikiClient(BaseClient):
             self.all_text+=curr_thread_text
 
         print("Get text async finished - {}".format(titles[1]))
+        return 0
 
-    def aprove_finish(self):
+    def aprove_finish(self,status):
+        count,is_enough = self.check_is_limit(self.all_text, self.count, self.is_char)
+        with self.limit_lock:
+            self.enough_text = is_enough
         self.is_processing = False
-        self.enough_text = self.check_is_limit(self.all_text, self.count, self.is_char)
 
     def build_url(self, title):
         url = "https://en.wikipedia.org/w/api.php?action=query&format=json"
