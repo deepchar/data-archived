@@ -25,9 +25,28 @@ class WikiClient(BaseClient):
             raise ValueError("Specified key for language doesn't support")
 
     # Get JSON response of request
-    def get_response(self, url):
-        resp = requests.get(url=url)
+    def get_response(self, url, params):
+        resp = requests.get(url=url,params=params)
         return resp.json()
+
+    def get_titles(self):
+        appcontinue = []
+
+        url = 'https://en.wikipedia.org/w/api.php?'
+        params = {'action': 'query','list': 'allpages','format': 'json','aplimit': '500'}
+
+        json_resp = self.get_response(url,params)
+        next_batch = json_resp["continue"]["apcontinue"]
+        params["continue"] = json_resp["continue"]["continue"]
+        params["apcontinue"] = json_resp["continue"]["apcontinue"]
+
+        appcontinue.append(next_batch)
+        while True:
+            json_resp = self.get_response(url,params)
+            params["continue"] = json_resp["continue"]["continue"]
+            params["apcontinue"] = json_resp["continue"]["apcontinue"]
+            next_batch = json_resp["continue"]["apcontinue"]
+            appcontinue.append(next_batch)
 
     def extract_text(self,path,is_char=True,count=1000000):
         titles = []
@@ -37,13 +56,13 @@ class WikiClient(BaseClient):
         continue_get_titles = True
         self.count = count
         self.is_char = is_char
-        
+        appcontinue = []
         url = 'https://en.wikipedia.org/w/api.php?action=query&list=allpages&format=json&aplimit=500'
         json_resp = self.get_response(url)
         titles_batch.extend(self.parse_json(json_resp["query"]["allpages"]))
         next_batch = json_resp["continue"]["apcontinue"]
         url +='&apcontinue=' + next_batch
-
+        appcontinue.append(next_batch)
         while True:
             with self.limit_lock:
                 if self.enough_text:
@@ -54,12 +73,13 @@ class WikiClient(BaseClient):
                 titles_batch.extend(self.parse_json(json_resp["query"]["allpages"]))
                 url = url.replace(next_batch, json_resp["continue"]["apcontinue"])
                 next_batch = json_resp["continue"]["apcontinue"]
+                appcontinue.append(next_batch)
 
             if len(titles_batch) == 2000:
                 titles.append(titles_batch)
                 titles_batch = []
 
-            if self.is_processing == False :
+            if self.is_processing == True :
                 if last_batach_index < len(titles):
                     self.is_processing = True
                     tmp_titles = list(set(titles[last_batach_index]))
