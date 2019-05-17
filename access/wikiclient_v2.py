@@ -20,6 +20,7 @@ class WikiClient(BaseClient):
             self.language = language
             self.is_processing = False
             self.is_char = True
+            self.set_lock  = Lock()
             self.count = 1000000
         else:
             raise ValueError("Specified key for language doesn't support")
@@ -94,6 +95,11 @@ class WikiClient(BaseClient):
                 page = eng_engine.page(title)
                 if self.language in page.langlinks:
                     destTitle = page.langlinks[self.language].title
+                    with self.set_lock:
+                        if destTitle in self.titles:
+                            print("Duplication")
+                            continue
+                        self.titles.add(destTitle)
                     curr_thread_text += self.split_text(destLangEngine.page(destTitle).text)
             except Exception as ex:
                 not_valid+=1
