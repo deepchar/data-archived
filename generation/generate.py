@@ -3,7 +3,7 @@ import codecs
 import random
 # from pprint import pprint
 
-from access.wikiclient import WikiClient
+from access.wikiclient_v2 import WikiClient
 
 
 class generation(object):
@@ -13,8 +13,8 @@ class generation(object):
         self.to_language = to_language
 
     def get_textfile(self):
-        file_path = '../raw/wiki_raw.txt'
-        self.client.extract_text(file_path, is_char=False, count=1000000)
+        file_path = 'K:\\dataNew\\raw\\wiki_raw_100K_row.txt'
+        self.client.extract_text(file_path, is_char=False, count=100000)
 
     def get_mapping(self, file):
         with codecs.open(file, encoding="utf-8-sig") as m:
@@ -25,7 +25,7 @@ class generation(object):
         result = ''
         mapping = self.get_mapping(map_file)
 
-        with codecs.open('../raw/wiki_raw.txt', 'r', encoding="utf-8") as text_file:
+        with codecs.open('K:\\dataNew\\raw\\wiki_raw_100K_row.txt', 'r', encoding="utf-8") as text_file:
             for line in text_file:
                 for char in line:
                     if char in mapping.keys():
@@ -33,7 +33,7 @@ class generation(object):
                     else:
                         result += char
 
-        with codecs.open('../raw/translit_text.txt', 'w', encoding="utf-8") as translit_file:
+        with codecs.open('K:\\dataNew\\raw\\translit_text_100K_row.txt', 'w', encoding="utf-8") as translit_file:
             translit_file.write(result)
 
 
@@ -42,10 +42,8 @@ lan2: str = 'en'
 g = generation(lan1, lan2)
 
 g.get_textfile()
-
-map_file = '../mappings/hy-Latn.json'
-# pprint(g.get_mapping(map_file))
-
-# w = WikiClient(lan1)
-
+map_file = 'K:\\dataNew\\mappings\\hy-Latn.json'
+w = WikiClient(lan1)
+#w.get_titles()
+#w.extract_text(f,False,100000)
 g.translit(map_file)
