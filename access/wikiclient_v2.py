@@ -49,7 +49,7 @@ class WikiClient(BaseClient):
 
         while True:
             with self.limit_lock:
-                if self.enough_text:
+                if self.enough_text or (not continue_get_titles and last_batach_index == len(titles)):
                     break
 
             if continue_get_titles:
