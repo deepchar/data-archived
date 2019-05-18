@@ -38,18 +38,13 @@ class WikiClient(BaseClient):
         continue_get_titles = True
         self.count = count
         self.is_char = is_char
+        app_continue = []
+        params = {}
 
-        params = {'action': 'query',
-                  'list': 'allpages',
-                  'format': 'json',
-                  'aplimit': '500'
-                  }
-
-        url = 'https://en.wikipedia.org/w/api.php?'
+        url = 'https://en.wikipedia.org/w/api.php?action=query&list=allpages&format=json&aplimit=500'
         json_resp = self.get_response(url,params)
-        params["continue"] = json_resp["continue"]["continue"]
-        params["apcontinue"] = json_resp["continue"]["apcontinue"]
-
+        params = json_resp["continue"]
+        app_continue.append(json_resp["continue"])
         titles_batch.extend(self.parse_json(json_resp["query"]["allpages"]))
 
         while True:
@@ -59,8 +54,12 @@ class WikiClient(BaseClient):
 
             if continue_get_titles:
                 json_resp = self.get_response(url,params)
-                params["continue"] = json_resp["continue"]["continue"]
-                params["apcontinue"] = json_resp["continue"]["apcontinue"]
+
+                if "continue" not in json_resp:
+                    continue_get_titles = False
+                else:
+                    params = json_resp["continue"]
+                    app_continue.append(json_resp["continue"])
                 titles_batch.extend(self.parse_json(json_resp["query"]["allpages"]))
 
             if len(titles_batch) == 5000:
@@ -77,8 +76,7 @@ class WikiClient(BaseClient):
                     last_batach_index+= 1
                     results = pool.map_async(self.get_text_async, to_be_processed,callback=self.aprove_finish)
 
-            if "continue" not in json_resp:
-                continue_get_titles = False
+            
 
         with open(path, 'wb') as file:
             file.write(self.all_text.encode('utf-8'))
