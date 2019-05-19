@@ -33,7 +33,7 @@ class WikiClient(BaseClient):
     def extract_text(self,path,is_char=True,count=1000000):
         titles = []
         titles_batch = []
-        pool = ThreadPool(4)
+        pool = ThreadPool(84)
         last_batach_index = 0
         continue_get_titles = True
         self.count = count
@@ -62,7 +62,7 @@ class WikiClient(BaseClient):
                     app_continue.append(json_resp["continue"])
                 titles_batch.extend(self.parse_json(json_resp["query"]["allpages"]))
 
-            if len(titles_batch) == 5000:
+            if len(titles_batch) == 105000:
                 titles.append(titles_batch)
                 titles_batch = []
 
@@ -70,9 +70,9 @@ class WikiClient(BaseClient):
                 if last_batach_index < len(titles):
                     self.is_processing = True
                     tmp_titles = list(set(titles[last_batach_index]))
-                    per_batch_size = len(tmp_titles) // 4
+                    per_batch_size = len(tmp_titles) // 84
 
-                    to_be_processed = [(tmp_titles[i * per_batch_size:i * per_batch_size + per_batch_size],i) for i in range(4)]
+                    to_be_processed = [(tmp_titles[i * per_batch_size:i * per_batch_size + per_batch_size],i) for i in range(84)]
                     last_batach_index+= 1
                     results = pool.map_async(self.get_text_async, to_be_processed,callback=self.aprove_finish)
 
