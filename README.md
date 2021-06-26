@@ -1,6 +1,6 @@
 ## deepchar - Data extraction and translit generation
 
-Prupose of repository is provide tool to download distinct articles from wikipedia with additional flexible functionality: convert extracted text into character level representation or/and generate transliteration.
+Prupose of repository is provide tool to download distinct articles from wikipedia, with additional flexible functionality: convert extracted text into character level representation or/and generate transliteration.
 
 # Table of Contents
  - [Requirements](#requirements)
