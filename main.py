@@ -14,8 +14,8 @@ def parse_arguments():
     parser.add_argument("generate_translit",help="Generate transliteration", type=bool)
     parser.add_argument("character_level",  help="Convert to character level", type=bool)
     parser.add_argument("--row_length",     help="Count of characters in one row", type=int, default = 100)
-    parser.add_argument("--count",          help="Count of characters or rows", type=int, default = 100000)
-    parser.add_argument("--is_char",        help="Consider count as count of characters", type=bool, default = False)
+    parser.add_argument("--count",          help="Total count of characters or rows", type=int, default = 100000)
+    parser.add_argument("--is_char",        help="Consider count as total count of characters", type=bool, default = False)
     return parser.parse_args()
 
 def main():
