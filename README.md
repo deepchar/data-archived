@@ -1,7 +1,7 @@
 
 ## deepchar - Data extraction and translit generation
 
-Prupose of repository is provide tool to download distinct articles from wikipedia, with additional flexible functionality: convert extracted text into character level representation or/and generate transliteration.
+Purpose of repository is provide tool to download distinct articles from wikipedia, with additional flexible functionality: convert extracted text into character level representation or/and generate transliteration.
 
 # Table of Contents
  - [Requirements](#requirements)
@@ -31,7 +31,7 @@ python main.py --config_path=data.yaml
 will do following based on yaml configuration file:
  - Download wikipedia articles in Russian and Armenian
  - Convert to caracter level for both languages (you can set **False** to not convert to character level)
- - Generates transliteration from **sourlce_lang** corpus to **taget_langs** (you can set to **False** to not generate transilterations). 
+ - Generates transliteration from **source_lang** corpus to **target_langs** (you can set to **False** to not generate transilterations). 
  - For Armenian each row will have 150 chars and for Russian 100 chars.
  - For Armenian **count** means count of total rows, **count** for Russian means count of total characters to download. To switch from count of rows to count of characters you have to use **char: True**
 
