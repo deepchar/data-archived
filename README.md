@@ -1,3 +1,4 @@
+
 ## deepchar - Data extraction and translit generation
 
 Prupose of repository is provide tool to download distinct articles from wikipedia, with additional flexible functionality: convert extracted text into character level representation or/and generate transliteration.
@@ -23,7 +24,6 @@ You have flexibility to :
 
 Script splits text into rows by keeping context( add some words from end of previous row, to the front of current row ). You will have flexibility to download text as based on total count of rows as based on total counts of characters.
 
-Example:
 Following example
 ```
 python main.py --config_path=data.yaml
@@ -80,7 +80,3 @@ Here is example for russian -> english:
 ```
 After creating mapping file, move it into following [directory](./resources/mappings) and run main.py.<br/>
 **Note:** We will appreciate if you will share your created mappings with us. 
-
-
-
-
