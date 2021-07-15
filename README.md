@@ -21,37 +21,37 @@ You have flexibility to :
  - Download wikipedia articles for any language + convert to character level
  - Download wikipedia articles for any language + convert to character level + transliteration 
 
-Script splits text into rows by keeping context( add some words from end of previous row, to the front of current row ). You will have flexibility to download text as based on total count of rows as based on total counts of characters. Here is listed all arguments:
-
-```
-parser.add_argument("source_lang",      help="Source language")
-parser.add_argument("target_lang",      help="Target language")
-parser.add_argument("output_folder",    help="Output folder")
-parser.add_argument("generate_translit",help="Generate transliteration", type=bool)
-parser.add_argument("character_level",  help="Convert to character level", type=bool)
-parser.add_argument("--row_length",     help="Count of characters in one row", type=int, default = 100)
-parser.add_argument("--count",          help="Total count of characters or rows", type=int, default = 100000)
-parser.add_argument("--is_char",        help="Consider count as total count of characters", type=bool, default = False)
-```
+Script splits text into rows by keeping context( add some words from end of previous row, to the front of current row ). You will have flexibility to download text as based on total count of rows as based on total counts of characters.
 
 Example:
 Following example will:
- - Download wikipedia articles in Russian
- - Convert to caracter level
- - Generate transliteration 
- - Each row length will be 100 chars
- - Last argument False means, will collect 100000 rows
+ - Download wikipedia articles in Russian and Armenian
+ - Convert to caracter level for both languages (you can set **False** to not convert to character level)
+ - Generates transliteration from **sourlce_lang** corpus to **taget_langs** (you can set to **False** to not generate transilterations). 
+ - For Armenian each row will have 150 chars and for Russian 100 chars.
+ - For Armenian **count** means count of total rows, **count** for Russian means count of total characters to download. To switch from count of rows to count of characters you ahve to use **char: True**
+
 ```
-python main.py ru en data True True  100 100000  False
-```
-Another example:
-- Download wikipedia articles in Armenian
-- Convert to caracter level
-- Generate transliteration 
-- Each row length will be 100 chars
-- Download in total 100000 characters 
-```
-python main.py hy en data True True  100 100000  True
+output_folder: "......"
+pairs:
+  -
+    source_lang: "hy"
+    target_langs:
+      - "en"
+      - "ru"
+    char_level: True
+    translit: True
+    rows_len: 150
+    count: 5000
+  -
+    source_lang: "ru"
+    target_langs:
+      - "en"
+    char_level: True
+    translit: True
+    rows_len: 100
+    count: 15000
+    char: True
 ```
 
 ### Language codes <a name="lang-code"></a>
