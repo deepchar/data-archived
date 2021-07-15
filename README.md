@@ -24,12 +24,17 @@ You have flexibility to :
 Script splits text into rows by keeping context( add some words from end of previous row, to the front of current row ). You will have flexibility to download text as based on total count of rows as based on total counts of characters.
 
 Example:
-Following example will:
+Following example
+```
+python main.py --config_path=data.yaml
+``` 
+will do following based on yaml configuration file:
  - Download wikipedia articles in Russian and Armenian
  - Convert to caracter level for both languages (you can set **False** to not convert to character level)
  - Generates transliteration from **sourlce_lang** corpus to **taget_langs** (you can set to **False** to not generate transilterations). 
  - For Armenian each row will have 150 chars and for Russian 100 chars.
- - For Armenian **count** means count of total rows, **count** for Russian means count of total characters to download. To switch from count of rows to count of characters you ahve to use **char: True**
+ - For Armenian **count** means count of total rows, **count** for Russian means count of total characters to download. To switch from count of rows to count of characters you have to use **char: True**
+
 
 ```
 output_folder: "......"
