@@ -1,0 +1,20 @@
+output_folder: "......"
+pairs:
+  -
+    source_lang: "hy"
+    target_langs:
+      - "en"
+      - "ru"
+    char_level: True
+    translit: True
+    rows_len: 150
+    count: 5000
+  -
+    source_lang: "ru"
+    target_langs:
+      - "en"
+    char_level: True
+    translit: True
+    rows_len: 150
+    count: 15000
+    char: True
