@@ -17,3 +17,4 @@ pairs:
     translit: True
     rows_len: 150
     count: 15000
+    char: True
